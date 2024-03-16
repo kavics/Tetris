@@ -10,11 +10,23 @@ internal class World
     private readonly bool[,] _bits;
     private readonly Random _rng = new Random();
 
-    public Square? CurrentSquare { get; private set; } = null;
+    public Square? CurrentSquare
+    {
+        get
+        {
+            if (CurrentShape == null)
+                return null;
+            return CurrentShape.Squares[CurrentShapeIndex];
+        }
+    }
+
+    public Shape? CurrentShape { get; private set; }
+    public int CurrentShapeIndex { get; private set; }
+
     public (int X, int Y) CurrentSquarePosition { get; private set; }
     public bool CurrentSquareChanged { get; private set; }
 
-    public Square[] NextSquares { get; } = new Square[NextPanelCount];
+    public (Shape Shape, int Index)[] NextSquares { get; } = new (Shape, int)[NextPanelCount];
 
     public World(Shape[] shapes, int xMax, int yMax)
     {
@@ -33,10 +45,12 @@ internal class World
 
     public bool NextCycle()
     {
-        if (CurrentSquare == null)
+        if (CurrentShape == null)
         {
             // Game start or current was dropped.
-            CurrentSquare = NextSquares[0];
+            CurrentShape = NextSquares[0].Shape;
+            CurrentShapeIndex = NextSquares[0].Index;
+
             CurrentSquarePosition = (8, 0 - CurrentSquare.EmptyRowsTop);
             ScrollSquares();
             CurrentSquareChanged = true; // need to render next panel
@@ -53,7 +67,7 @@ internal class World
 
         // Drop current square;
         CopyCurrentSquareToDroppedBits();
-        CurrentSquare = null;
+        CurrentShape= null;
         return true;
     }
 
@@ -77,10 +91,11 @@ internal class World
         NextSquares[NextPanelCount - 1] = GetRandomSquare();
     }
 
-    private Square GetRandomSquare()
+    private (Shape, int) GetRandomSquare()
     {
         var shape = _shapes[_rng.Next(_shapes.Length)];
-        return shape.Squares[_rng.Next(4)];
+        var index = _rng.Next(4);
+        return (shape, index);
     }
 
     public bool WillCollide((int X, int Y) position)
@@ -109,7 +124,7 @@ internal class World
 
     public void MoveLeft()
     {
-        if (CurrentSquare == null)
+        if (CurrentShape == null)
             return;
         if (WillCollide((CurrentSquarePosition.X - 1, CurrentSquarePosition.Y)))
             return;
@@ -117,7 +132,7 @@ internal class World
     }
     public void MoveRight()
     {
-        if (CurrentSquare == null)
+        if (CurrentShape == null)
             return;
         if (WillCollide((CurrentSquarePosition.X + 1, CurrentSquarePosition.Y)))
             return;
@@ -125,7 +140,7 @@ internal class World
     }
     public void Drop()
     {
-        if (CurrentSquare == null)
+        if (CurrentShape == null)
             return;
         if (WillCollide((CurrentSquarePosition.X, CurrentSquarePosition.Y + 1)))
             return;
@@ -133,7 +148,7 @@ internal class World
     }
     public void Rotate()
     {
-        if (CurrentSquare == null)
+        if (CurrentShape == null)
             return;
 
         throw new NotImplementedException();

@@ -99,7 +99,8 @@ public partial class Form1 : Form
         for (int i = 0; i < _nextPanels.Length; i++)
         {
             var panel = _nextPanels[i];
-            var square = _world.NextSquares[i];
+            var ns = _world.NextSquares[i];
+            var square = ns.Shape.Squares[ns.Index];
             for (var y = 0; y < Shape.MaxWidth; y++)
             {
                 for (var x = 0; x < Shape.MaxWidth; x++)

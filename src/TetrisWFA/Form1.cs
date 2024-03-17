@@ -3,7 +3,9 @@ namespace TetrisWFA;
 
 public partial class Form1 : Form
 {
+    private int _lines;
     private int _score;
+
     public Form1()
     {
         InitializeComponent();
@@ -27,18 +29,23 @@ public partial class Form1 : Form
         _mainPanelCellCountY = MainPanel.Height / CellSize;
         _shapes = CreateShapes(ShapeSource.Shapes);
         _nextPanels = new[] { NextPanel1, NextPanel2, NextPanel3 };
+        _score = 0;
+        _lines = 0;
         CreateUi();
 
         _world = new World(_shapes, _mainPanelCellCountX, _mainPanelCellCountY);
         _world.InitializeRandom();
 
         RenderNextPanels();
+        RenderScores();
         this.Focus();
     }
     private void RestartGame()
     {
         _world = new World(_shapes, _mainPanelCellCountX, _mainPanelCellCountY);
         _world.InitializeRandom();
+        _score = 0;
+        _lines = 0;
 
         RenderMainPanel();
         RenderNextPanels();
@@ -138,11 +145,21 @@ public partial class Form1 : Form
         mainTimer.Enabled = false;
         toolStripStatusLabel1.Text = $"{++_cycles}";
         HideCurrentSquare();
-        if (_world.NextCycle())
+        var state = _world.NextCycle();
+        if (state != CycleResult.GameOver)
         {
             RenderWorld();
-            _score++;
-            scoreLabel.Text = $"{_score}";
+            if (state == CycleResult.LineDropped)
+            {
+                _score += 20;
+                _lines++;
+            }
+            else
+            {
+                _score += 1;
+            }
+            _score += state == CycleResult.LineDropped ? 10 : 1;
+            RenderScores();
             mainTimer.Enabled = true;
         }
         else
@@ -165,6 +182,11 @@ public partial class Form1 : Form
         for (var y = 0; y < _mainPanelCellCountY; y++)
             for (var x = 0; x < _mainPanelCellCountX; x++)
                 _mainCells[x, y].BackColor = _mainPanelColors[_world[x, y] ? 1 : 0];
+    }
+    private void RenderScores()
+    {
+        LinesLabel.Text = $"{_lines}";
+        scoreLabel.Text = $"{_score}";
     }
     private void RenderCurrentSquare()
     {

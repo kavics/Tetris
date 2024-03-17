@@ -1,5 +1,7 @@
 ﻿namespace TetrisWFA;
 
+internal enum CycleResult { Moving, LineDropped, GameOver }
+
 internal class World
 {
     public static readonly int NextPanelCount = 3;
@@ -43,8 +45,11 @@ internal class World
     }
 
 
-    public bool NextCycle()
+    public CycleResult NextCycle()
     {
+        if (RemoveLineIfFull())
+            return CycleResult.LineDropped;
+
         if (CurrentShape == null)
         {
             // Game start or current was dropped.
@@ -54,7 +59,7 @@ internal class World
             CurrentSquarePosition = (8, 0 - CurrentSquare.EmptyRowsTop);
             ScrollSquares();
             CurrentSquareChanged = true; // need to render next panel
-            return !WillCollide(CurrentSquare, CurrentSquarePosition);
+            return WillCollide(CurrentSquare, CurrentSquarePosition) ? CycleResult.GameOver : CycleResult.Moving;
         }
 
         CurrentSquareChanged = false;
@@ -62,13 +67,38 @@ internal class World
         if (!WillCollide(CurrentSquare, nextPosition))
         {
             CurrentSquarePosition = nextPosition;
-            return true;
+            return CycleResult.Moving;
         }
 
         // Drop current square;
         CopyCurrentSquareToDroppedBits();
         CurrentShape= null;
-        return true;
+        return CycleResult.Moving;
+    }
+
+    private bool RemoveLineIfFull()
+    {
+        for (int y = _yMax - 1; y >= 0; y--)
+        {
+            var isFull = true;
+            for (var x = 0; x < _xMax; x++)
+                isFull &= _bits[x, y];
+
+            if (isFull)
+            {
+                RemoveLine(y);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void RemoveLine(int line)
+    {
+        for (int y = line; y >= 1; y--)
+            for (var x = 0; x < _xMax; x++)
+                _bits[x, y] = _bits[x, y - 1];
     }
 
     private void CopyCurrentSquareToDroppedBits()

@@ -54,12 +54,12 @@ internal class World
             CurrentSquarePosition = (8, 0 - CurrentSquare.EmptyRowsTop);
             ScrollSquares();
             CurrentSquareChanged = true; // need to render next panel
-            return !WillCollide(CurrentSquarePosition);
+            return !WillCollide(CurrentSquare, CurrentSquarePosition);
         }
 
         CurrentSquareChanged = false;
         var nextPosition = (CurrentSquarePosition.X, CurrentSquarePosition.Y + 1);
-        if (!WillCollide(nextPosition))
+        if (!WillCollide(CurrentSquare, nextPosition))
         {
             CurrentSquarePosition = nextPosition;
             return true;
@@ -98,9 +98,8 @@ internal class World
         return (shape, index);
     }
 
-    public bool WillCollide((int X, int Y) position)
+    public bool WillCollide(Square? sq, (int X, int Y) position)
     {
-        var sq = CurrentSquare;
         if (sq == null)
             return false;
 
@@ -126,7 +125,7 @@ internal class World
     {
         if (CurrentShape == null)
             return;
-        if (WillCollide((CurrentSquarePosition.X - 1, CurrentSquarePosition.Y)))
+        if (WillCollide(CurrentSquare, (CurrentSquarePosition.X - 1, CurrentSquarePosition.Y)))
             return;
         CurrentSquarePosition = (CurrentSquarePosition.X - 1, CurrentSquarePosition.Y);
     }
@@ -134,7 +133,7 @@ internal class World
     {
         if (CurrentShape == null)
             return;
-        if (WillCollide((CurrentSquarePosition.X + 1, CurrentSquarePosition.Y)))
+        if (WillCollide(CurrentSquare, (CurrentSquarePosition.X + 1, CurrentSquarePosition.Y)))
             return;
         CurrentSquarePosition = (CurrentSquarePosition.X + 1, CurrentSquarePosition.Y);
     }
@@ -142,7 +141,7 @@ internal class World
     {
         if (CurrentShape == null)
             return;
-        if (WillCollide((CurrentSquarePosition.X, CurrentSquarePosition.Y + 1)))
+        if (WillCollide(CurrentSquare, (CurrentSquarePosition.X, CurrentSquarePosition.Y + 1)))
             return;
         CurrentSquarePosition = (CurrentSquarePosition.X, CurrentSquarePosition.Y + 1);
     }
@@ -151,7 +150,12 @@ internal class World
         if (CurrentShape == null)
             return;
 
-        throw new NotImplementedException();
+        var rotatedIndex = (CurrentShapeIndex + 1) % 4;
+        var rotated = CurrentShape.Squares[rotatedIndex];
+        if (WillCollide(rotated, (CurrentSquarePosition.X, CurrentSquarePosition.Y + 1)))
+            return;
+
+        CurrentShapeIndex = rotatedIndex;
     }
 
     public bool this[int x, int y]

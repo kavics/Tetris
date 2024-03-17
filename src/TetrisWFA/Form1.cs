@@ -123,7 +123,7 @@ public partial class Form1 : Form
     /// <summary>Only debug purposes</summary>
     private void control_Click(object? sender, EventArgs e)
     {
-        toolStripStatusLabel2.Text = (sender as Control)?.Name ?? "unknown";
+        //toolStripStatusLabel2.Text = (sender as Control)?.Name ?? "unknown";
     }
 
     private Shape[] _shapes;
@@ -165,7 +165,6 @@ public partial class Form1 : Form
         else
         {
             mainTimer.Enabled = false;
-            gameOverScoreLabel.Text = $"{_score}";
             gameOverPanel.Visible = true;
         }
     }
@@ -215,8 +214,15 @@ public partial class Form1 : Form
                         _mainCells[x + p.X, y + p.Y].BackColor = _mainPanelColors[0];
     }
 
+    private bool _paused;
     private void Form1_KeyDown(object sender, KeyEventArgs e)
     {
+        if (_paused)
+        {
+            Continue();
+            return;
+        }
+
         if (_world.CurrentSquare == null)
             return;
 
@@ -229,9 +235,23 @@ public partial class Form1 : Form
             case Keys.Right: _world.MoveRight(); break;
             case Keys.Up: _world.Rotate(); break;
             case Keys.Down: _world.Drop(); break;
+            case Keys.P: Pause(); break;
         }
         e.Handled = true;
         RenderCurrentSquare();
+    }
+
+    private void Pause()
+    {
+        _paused = true;
+        mainTimer.Enabled = false;
+        pausePanel.Visible = true;
+    }
+    private void Continue()
+    {
+        mainTimer.Enabled = true;
+        pausePanel.Visible = false;
+        _paused = false;
     }
 
     private void Form1_Load(object sender, EventArgs e)

@@ -32,7 +32,6 @@
             MainPanel = new Panel();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabel1 = new ToolStripStatusLabel();
-            toolStripStatusLabel2 = new ToolStripStatusLabel();
             NextPanel1 = new Panel();
             label1 = new Label();
             label2 = new Label();
@@ -43,13 +42,15 @@
             scoreLabel = new Label();
             mainTimer = new System.Windows.Forms.Timer(components);
             gameOverPanel = new Panel();
-            gameOverScoreLabel = new Label();
-            label6 = new Label();
             label5 = new Label();
             exitButton = new Button();
             newGameButton = new Button();
+            pausePanel = new Panel();
+            label6 = new Label();
+            label4 = new Label();
             statusStrip1.SuspendLayout();
             gameOverPanel.SuspendLayout();
+            pausePanel.SuspendLayout();
             SuspendLayout();
             // 
             // MainPanel
@@ -63,7 +64,7 @@
             // 
             // statusStrip1
             // 
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2 });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
             statusStrip1.Location = new Point(0, 639);
             statusStrip1.Name = "statusStrip1";
             statusStrip1.Size = new Size(579, 22);
@@ -75,12 +76,6 @@
             toolStripStatusLabel1.Name = "toolStripStatusLabel1";
             toolStripStatusLabel1.Size = new Size(118, 17);
             toolStripStatusLabel1.Text = "toolStripStatusLabel1";
-            // 
-            // toolStripStatusLabel2
-            // 
-            toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            toolStripStatusLabel2.Size = new Size(118, 17);
-            toolStripStatusLabel2.Text = "toolStripStatusLabel2";
             // 
             // NextPanel1
             // 
@@ -164,36 +159,14 @@
             // gameOverPanel
             // 
             gameOverPanel.BorderStyle = BorderStyle.FixedSingle;
-            gameOverPanel.Controls.Add(gameOverScoreLabel);
-            gameOverPanel.Controls.Add(label6);
             gameOverPanel.Controls.Add(label5);
             gameOverPanel.Controls.Add(exitButton);
             gameOverPanel.Controls.Add(newGameButton);
-            gameOverPanel.Location = new Point(78, 97);
+            gameOverPanel.Location = new Point(83, 263);
             gameOverPanel.Name = "gameOverPanel";
-            gameOverPanel.Size = new Size(395, 226);
+            gameOverPanel.Size = new Size(395, 168);
             gameOverPanel.TabIndex = 11;
             gameOverPanel.Visible = false;
-            // 
-            // gameOverScoreLabel
-            // 
-            gameOverScoreLabel.AutoSize = true;
-            gameOverScoreLabel.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            gameOverScoreLabel.Location = new Point(188, 72);
-            gameOverScoreLabel.Name = "gameOverScoreLabel";
-            gameOverScoreLabel.Size = new Size(172, 21);
-            gameOverScoreLabel.TabIndex = 4;
-            gameOverScoreLabel.Text = "gameOverScoreLabel";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            label6.Location = new Point(108, 72);
-            label6.Name = "label6";
-            label6.Size = new Size(56, 21);
-            label6.TabIndex = 3;
-            label6.Text = "Score:";
             // 
             // label5
             // 
@@ -208,7 +181,7 @@
             // exitButton
             // 
             exitButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            exitButton.Location = new Point(217, 157);
+            exitButton.Location = new Point(217, 95);
             exitButton.Name = "exitButton";
             exitButton.Size = new Size(75, 33);
             exitButton.TabIndex = 1;
@@ -219,7 +192,7 @@
             // newGameButton
             // 
             newGameButton.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
-            newGameButton.Location = new Point(74, 157);
+            newGameButton.Location = new Point(74, 95);
             newGameButton.Name = "newGameButton";
             newGameButton.Size = new Size(122, 33);
             newGameButton.TabIndex = 0;
@@ -227,11 +200,43 @@
             newGameButton.UseVisualStyleBackColor = true;
             newGameButton.Click += newGameButton_Click;
             // 
+            // pausePanel
+            // 
+            pausePanel.BorderStyle = BorderStyle.FixedSingle;
+            pausePanel.Controls.Add(label6);
+            pausePanel.Controls.Add(label4);
+            pausePanel.Location = new Point(83, 128);
+            pausePanel.Name = "pausePanel";
+            pausePanel.Size = new Size(395, 129);
+            pausePanel.TabIndex = 12;
+            pausePanel.Visible = false;
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Font = new Font("Segoe UI", 12F, FontStyle.Bold);
+            label6.Location = new Point(92, 74);
+            label6.Name = "label6";
+            label6.Size = new Size(204, 21);
+            label6.TabIndex = 1;
+            label6.Text = "Press any key to continue";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            label4.Location = new Point(157, 25);
+            label4.Name = "label4";
+            label4.Size = new Size(81, 30);
+            label4.TabIndex = 0;
+            label4.Text = "PAUSE";
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(579, 661);
+            Controls.Add(pausePanel);
             Controls.Add(gameOverPanel);
             Controls.Add(scoreLabel);
             Controls.Add(LinesLabel);
@@ -251,6 +256,8 @@
             statusStrip1.PerformLayout();
             gameOverPanel.ResumeLayout(false);
             gameOverPanel.PerformLayout();
+            pausePanel.ResumeLayout(false);
+            pausePanel.PerformLayout();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -269,12 +276,12 @@
         private Label LinesLabel;
         private Label scoreLabel;
         private System.Windows.Forms.Timer mainTimer;
-        private ToolStripStatusLabel toolStripStatusLabel2;
         private Panel gameOverPanel;
         private Label label5;
         private Button exitButton;
         private Button newGameButton;
-        private Label gameOverScoreLabel;
+        private Panel pausePanel;
         private Label label6;
+        private Label label4;
     }
 }
